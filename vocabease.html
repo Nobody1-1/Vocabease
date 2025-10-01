@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VocabEase - Aplikasi Kuis Bahasa</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .logo h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .level-badge {
+            background: linear-gradient(45deg, #3742fa, #2f3542);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .xp-counter {
+            background: linear-gradient(45deg, #ffa502, #ff6348);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Quiz Section */
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .quiz-header {
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .question-container {
+            margin: 40px 0;
+        }
+
+        .question-type {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            color: #333;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        .audio-player {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            color: white;
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .play-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .play-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .timer {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ff6b6b;
+            margin: 10px 0;
+        }
+
+        .answer-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 15px 20px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 18px;
+            text-align: center;
+            transition: all 0.3s ease;
+            margin: 20px 0;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .option-btn {
+            padding: 20px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .option-btn:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .option-btn.selected {
+            border-color: #667eea;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .option-btn.correct {
+            border-color: #2ed573;
+            background: linear-gradient(45deg, #2ed573, #7bed9f);
+            color: white;
+        }
+
+        .option-btn.incorrect {
+            border-color: #ff4757;
+            background: linear-gradient(45deg, #ff4757, #ff6b7a);
+            color: white;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #2ed573, #7bed9f);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(46, 213, 115, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Leaderboard */
+        .leaderboard {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .leaderboard-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .leaderboard-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            margin: 10px 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .rank {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            margin-right: 20px;
+        }
+
+        .rank.gold { background: linear-gradient(45deg, #ffd700, #ffed4e); }
+        .rank.silver { background: linear-gradient(45deg, #c0c0c0, #e8e8e8); }
+        .rank.bronze { background: linear-gradient(45deg, #cd7f32, #daa520); }
+        .rank.other { background: linear-gradient(45deg, #667eea, #764ba2); color: white; }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            margin-right: 20px;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .username {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .user-level {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .user-xp {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        /* Achievements */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .achievement-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .achievement-card.unlocked::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #2ed573, #7bed9f);
+        }
+
+        .achievement-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: white;
+        }
+
+        .achievement-card.unlocked .achievement-icon {
+            background: linear-gradient(45deg, #2ed573, #7bed9f);
+        }
+
+        .achievement-card:not(.unlocked) .achievement-icon {
+            background: #ccc;
+        }
+
+        .achievement-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .achievement-desc {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .achievement-progress {
+            margin-top: 15px;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar-small {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill-small {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        /* Levels */
+        .levels-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .level-path {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .level-node {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .level-node.completed {
+            background: linear-gradient(45deg, #2ed573, #7bed9f);
+        }
+
+        .level-node.current {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            animation: pulse 2s infinite;
+        }
+
+        .level-node.locked {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(102, 126, 234, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0); }
+        }
+
+        .level-connector {
+            width: 4px;
+            height: 50px;
+            background: #e0e0e0;
+            margin: -15px 0;
+        }
+
+        .level-connector.completed {
+            background: linear-gradient(180deg, #2ed573, #7bed9f);
+        }
+
+        /* Results Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .result-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+
+        .result-icon.success {
+            background: linear-gradient(45deg, #2ed573, #7bed9f);
+        }
+
+        .result-icon.failure {
+            background: linear-gradient(45deg, #ff4757, #ff6b7a);
+        }
+
+        .result-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .result-score {
+            font-size: 48px;
+            font-weight: 700;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .continue-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .quiz-container {
+                padding: 20px;
+            }
+
+            .question-text {
+                font-size: 20px;
+            }
+
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+
+            .leaderboard-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h1>VocabEase</h1>
+            </div>
+            <div class="user-info">
+                <div class="level-badge">
+                    <i class="fas fa-star"></i> Level <span id="userLevel">1</span>
+                </div>
+                <div class="xp-counter">
+                    <i class="fas fa-fire"></i> <span id="userXP">0</span> XP
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showSection('quiz')">
+                <i class="fas fa-play-circle"></i> Kuis
+            </div>
+            <div class="nav-tab" onclick="showSection('leaderboard')">
+                <i class="fas fa-trophy"></i> Leaderboard
+            </div>
+            <div class="nav-tab" onclick="showSection('achievements')">
+                <i class="fas fa-medal"></i> Pencapaian
+            </div>
+            <div class="nav-tab" onclick="showSection('levels')">
+                <i class="fas fa-layer-group"></i> Level
+            </div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div id="quiz" class="content-section active">
+            <div class="quiz-container">
+                <div class="quiz-header">
+                    <h2>Kuis Bahasa Inggris</h2>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p>Pertanyaan <span id="currentQuestion">1</span> dari <span id="totalQuestions">10</span></p>
+                </div>
+
+                <div class="question-container">
+                    <div class="question-type" id="questionType">Listening</div>
+                    <div class="question-text" id="questionText">Dengarkan audio berikut dan ketik apa yang Anda dengar:</div>
+                    
+                    <div class="audio-player" id="audioPlayer" style="display: none;">
+                        <div class="audio-controls">
+                            <button class="play-btn" onclick="playAudio()">
+                                <i class="fas fa-play" id="playIcon"></i>
+                            </button>
+                            <div>
+                                <div>Klik untuk memutar audio</div>
+                                <div class="timer" id="timer">60 detik</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="text" class="answer-input" id="answerInput" placeholder="Ketik jawaban Anda di sini..." style="display: none;">
+
+                    <div class="options-container" id="optionsContainer"></div>
+                </div>
+
+                <button class="submit-btn" id="submitBtn" onclick="submitAnswer()">Kirim Jawaban</button>
+            </div>
+        </div>
+
+        <!-- Leaderboard Section -->
+        <div id="leaderboard" class="content-section">
+            <div class="leaderboard">
+                <div class="leaderboard-header">
+                    <h2 class="leaderboard-title">🏆 Leaderboard</h2>
+                    <p>Pemain terbaik minggu ini</p>
+                </div>
+                <div id="leaderboardList"></div>
+            </div>
+        </div>
+
+        <!-- Achievements Section -->
+        <div id="achievements" class="content-section">
+            <div class="leaderboard">
+                <div class="leaderboard-header">
+                    <h2 class="leaderboard-title">🏅 Pencapaian</h2>
+                    <p>Kumpulkan semua lencana!</p>
+                </div>
+                <div class="achievements-grid" id="achievementsList"></div>
+            </div>
+        </div>
+
+        <!-- Levels Section -->
+        <div id="levels" class="content-section">
+            <div class="levels-container">
+                <div class="leaderboard-header">
+                    <h2 class="leaderboard-title">📚 Jalur Pembelajaran</h2>
+                    <p>Selesaikan setiap level untuk membuka yang berikutnya</p>
+                </div>
+                <div class="level-path" id="levelPath"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Modal -->
+    <div class="modal" id="resultsModal">
+        <div class="modal-content">
+            <div class="result-icon" id="resultIcon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2 class="result-title" id="resultTitle">Selamat!</h2>
+            <p id="resultMessage">Jawaban Anda benar!</p>
+            <div class="result-score" id="resultScore">+10 XP</div>
+            <button class="continue-btn" onclick="nextQuestion()">Lanjutkan</button>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let gameState = {
+            currentQuestionIndex: 0,
+            score: 0,
+            userXP: parseInt(localStorage.getItem('userXP')) || 0,
+            userLevel: parseInt(localStorage.getItem('userLevel')) || 1,
+            completedLevels: JSON.parse(localStorage.getItem('completedLevels')) || [1],
+            achievements: JSON.parse(localStorage.getItem('achievements')) || [],
+            timeLeft: 60,
+            timerInterval: null,
+            audioPlaying: false,
+            streakCount: 0
+        };
+
+        // Questions Database
+        const questions = [
+            {
+                type: 'listening',
+                question: 'Dengarkan audio berikut dan ketik apa yang Anda dengar:',
+                audio: 'Hello, how are you today?',
+                correctAnswer: 'hello how are you today',
+                points: 15
+            },
+            {
+                type: 'multiple',
+                question: 'Apa arti dari kata "Beautiful"?',
+                options: ['Cantik', 'Jelek', 'Besar', 'Kecil'],
+                correctAnswer: 0,
+                points: 10
+            },
+            {
+                type: 'listening',
+                question: 'Dengarkan kalimat berikut dan ketik yang Anda dengar:',
+                audio: 'I love learning English every day',
+                correctAnswer: 'i love learning english every day',
+                points: 15
+            },
+            {
+                type: 'multiple',
+                question: 'Pilih terjemahan yang benar untuk "Good morning":',
+                options: ['Selamat siang', 'Selamat pagi', 'Selamat malam', 'Selamat sore'],
+                correctAnswer: 1,
+                points: 10
+            },
+            {
+                type: 'listening',
+                question: 'Ketik apa yang Anda dengar dari audio ini:',
+                audio: 'The weather is very nice today',
+                correctAnswer: 'the weather is very nice today',
+                points: 15
+            },
+            {
+                type: 'multiple',
+                question: 'Kata mana yang berarti "Buku"?',
+                options: ['Book', 'Pen', 'Table', 'Chair'],
+                correctAnswer: 0,
+                points: 10
+            },
+            {
+                type: 'listening',
+                question: 'Dengarkan dan ketik kalimat yang Anda dengar:',
+                audio: 'Can you help me please',
+                correctAnswer: 'can you help me please',
+                points: 15
+            },
+            {
+                type: 'multiple',
+                question: 'Apa bahasa Inggris dari "Terima kasih"?',
+                options: ['Please', 'Sorry', 'Thank you', 'Excuse me'],
+                correctAnswer: 2,
+                points: 10
+            },
+            {
+                type: 'listening',
+                question: 'Ketik kalimat yang Anda dengar:',
+                audio: 'What time is it now',
+                correctAnswer: 'what time is it now',
+                points: 15
+            },
+            {
+                type: 'multiple',
+                question: 'Pilih jawaban yang benar untuk "Where are you from?"',
+                options: ['I am fine', 'I am 20 years old', 'I am from Indonesia', 'I am a student'],
+                correctAnswer: 2,
+                points: 10
+            }
+        ];
+
+        // Leaderboard Data
+        let leaderboardData = [
+            { name: 'Ahmad Rizki', level: 15, xp: 2450, avatar: 'AR' },
+            { name: 'Siti Nurhaliza', level: 12, xp: 2100, avatar: 'SN' },
+            { name: 'Budi Santoso', level: 11, xp: 1950, avatar: 'BS' },
+            { name: 'Dewi Lestari', level: 10, xp: 1800, avatar: 'DL' },
+            { name: 'Andi Wijaya', level: 9, xp: 1650, avatar: 'AW' },
+            { name: 'Anda', level: gameState.userLevel, xp: gameState.userXP, avatar: 'YU' }
+        ];
+
+        // Achievements Data
+        let achievementsData = [
+            {
+                id: 'first_quiz',
+                title: 'Pemula',
+                description: 'Selesaikan kuis pertama Anda',
+                icon: 'fas fa-baby',
+                requirement: 1,
+                progress: 0,
+                unlocked: false
+            },
+            {
+                id: 'streak_3',
+                title: 'Konsisten',
+                description: 'Jawab 3 soal berturut-turut dengan benar',
+                icon: 'fas fa-fire',
+                requirement: 3,
+                progress: 0,
+                unlocked: false
+            },
+            {
+                id: 'listening_master',
+                title: 'Master Listening',
+                description: 'Selesaikan 5 soal listening dengan sempurna',
+                icon: 'fas fa-headphones',
+                requirement: 5,
+                progress: 0,
+                unlocked: false
+            },
+            {
+                id: 'speed_demon',
+                title: 'Kilat',
+                description: 'Jawab soal dalam waktu kurang dari 10 detik',
+                icon: 'fas fa-bolt',
+                requirement: 1,
+                progress: 0,
+                unlocked: false
+            },
+            {
+                id: 'perfectionist',
+                title: 'Perfeksionis',
+                description: 'Dapatkan skor 100% dalam satu kuis',
+                icon: 'fas fa-crown',
+                requirement: 1,
+                progress: 0,
+                unlocked: false
+            },
+            {
+                id: 'level_5',
+                title: 'Naik Level',
+                description: 'Capai level 5',
+                icon: 'fas fa-star',
+                requirement: 5,
+                progress: gameState.userLevel,
+                unlocked: gameState.userLevel >= 5
+            }
+        ];
+
+        // Initialize Game
+        function initGame() {
+            loadSavedData();
+            updateUI();
+            loadQuestion();
+            generateLeaderboard();
+            generateAchievements();
+            generateLevels();
+        }
+
+        // Load Saved Data
+        function loadSavedData() {
+            const savedAchievements = localStorage.getItem('achievements');
+            if (savedAchievements) {
+                const saved = JSON.parse(savedAchievements);
+                achievementsData.forEach((achievement, index) => {
+                    if (saved[index]) {
+                        achievement.progress = saved[index].progress || 0;
+                        achievement.unlocked = saved[index].unlocked || false;
+                    }
+                });
+            }
+        }
+
+        // Update UI
+        function updateUI() {
+            document.getElementById('userLevel').textContent = gameState.userLevel;
+            document.getElementById('userXP').textContent = gameState.userXP;
+            document.getElementById('currentQuestion').textContent = gameState.currentQuestionIndex + 1;
+            document.getElementById('totalQuestions').textContent = questions.length;
+            
+            const progress = ((gameState.currentQuestionIndex) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // Load Question
+        function loadQuestion() {
+            if (gameState.currentQuestionIndex >= questions.length) {
+                showResults();
+                return;
+            }
+
+            const question = questions[gameState.currentQuestionIndex];
+            document.getElementById('questionType').textContent = question.type === 'listening' ? 'Listening' : 'Pilihan Ganda';
+            document.getElementById('questionText').textContent = question.question;
+
+            // Reset UI
+            document.getElementById('audioPlayer').style.display = 'none';
+            document.getElementById('answerInput').style.display = 'none';
+            document.getElementById('optionsContainer').innerHTML = '';
+            document.getElementById('submitBtn').disabled = false;
+
+            if (question.type === 'listening') {
+                setupListeningQuestion(question);
+            } else {
+                setupMultipleChoiceQuestion(question);
+            }
+
+            updateUI();
+        }
+
+        // Setup Listening Question
+        function setupListeningQuestion(question) {
+            document.getElementById('audioPlayer').style.display = 'block';
+            document.getElementById('answerInput').style.display = 'block';
+            document.getElementById('answerInput').value = '';
+            
+            gameState.timeLeft = 60;
+            gameState.startTime = Date.now();
+            startTimer();
+        }
+
+        // Setup Multiple Choice Question
+        function setupMultipleChoiceQuestion(question) {
+            const container = document.getElementById('optionsContainer');
+            gameState.startTime = Date.now();
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option;
+                button.onclick = () => selectOption(index);
+                container.appendChild(button);
+            });
+        }
+
+        // Select Option
+        function selectOption(index) {
+            document.querySelectorAll('.option-btn').forEach((btn, i) => {
+                btn.classList.remove('selected');
+                if (i === index) {
+                    btn.classList.add('selected');
+                }
+            });
+            gameState.selectedOption = index;
+        }
+
+        // Play Audio (Simulated with Speech Synthesis)
+        function playAudio() {
+            const question = questions[gameState.currentQuestionIndex];
+            if (question.type !== 'listening') return;
+
+            const playIcon = document.getElementById('playIcon');
+            
+            if (!gameState.audioPlaying) {
+                // Use Speech Synthesis API to simulate audio
+                const utterance = new SpeechSynthesisUtterance(question.audio);
+                utterance.rate = 0.8;
+                utterance.pitch = 1;
+                utterance.volume = 1;
+                
+                utterance.onstart = () => {
+                    gameState.audioPlaying = true;
+                    playIcon.className = 'fas fa-pause';
+                };
+                
+                utterance.onend = () => {
+                    gameState.audioPlaying = false;
+                    playIcon.className = 'fas fa-play';
+                };
+                
+                speechSynthesis.speak(utterance);
+            } else {
+                speechSynthesis.cancel();
+                gameState.audioPlaying = false;
+                playIcon.className = 'fas fa-play';
+            }
+        }
+
+        // Start Timer
+        function startTimer() {
+            if (gameState.timerInterval) {
+                clearInterval(gameState.timerInterval);
+            }
+            
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeLeft--;
+                document.getElementById('timer').textContent = gameState.timeLeft + ' detik';
+                
+                if (gameState.timeLeft <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    submitAnswer();
+                }
+            }, 1000);
+        }
+
+        // Submit Answer
+        function submitAnswer() {
+            if (gameState.timerInterval) {
+                clearInterval(gameState.timerInterval);
+            }
+
+            const question = questions[gameState.currentQuestionIndex];
+            let isCorrect = false;
+            let userAnswer = '';
+            const answerTime = (Date.now() - gameState.startTime) / 1000;
+
+            if (question.type === 'listening') {
+                userAnswer = document.getElementById('answerInput').value.toLowerCase().trim();
+                isCorrect = userAnswer === question.correctAnswer;
+            } else {
+                isCorrect = gameState.selectedOption === question.correctAnswer;
+                
+                // Show correct/incorrect options
+                document.querySelectorAll('.option-btn').forEach((btn, index) => {
+                    if (index === question.correctAnswer) {
+                        btn.classList.add('correct');
+                    } else if (index === gameState.selectedOption && !isCorrect) {
+                        btn.classList.add('incorrect');
+                    }
+                });
+            }
+
+            if (isCorrect) {
+                gameState.score += question.points;
+                gameState.userXP += question.points;
+                gameState.streakCount++;
+                updateAchievements(question.type, true, answerTime);
+            } else {
+                gameState.streakCount = 0;
+                updateAchievements(question.type, false, answerTime);
+            }
+
+            // Save progress
+            localStorage.setItem('userXP', gameState.userXP);
+            
+            // Check level up
+            checkLevelUp();
+
+            // Show result modal
+            showAnswerResult(isCorrect, question.points);
+            
+            document.getElementById('submitBtn').disabled = true;
+        }
+
+        // Show Answer Result
+        function showAnswerResult(isCorrect, points) {
+            const modal = document.getElementById('resultsModal');
+            const icon = document.getElementById('resultIcon');
+            const title = document.getElementById('resultTitle');
+            const message = document.getElementById('resultMessage');
+            const score = document.getElementById('resultScore');
+
+            if (isCorrect) {
+                icon.className = 'result-icon success';
+                icon.innerHTML = '<i class="fas fa-check"></i>';
+                title.textContent = 'Benar!';
+                message.textContent = 'Jawaban Anda tepat!';
+                score.textContent = '+' + points + ' XP';
+            } else {
+                icon.className = 'result-icon failure';
+                icon.innerHTML = '<i class="fas fa-times"></i>';
+                title.textContent = 'Salah!';
+                message.textContent = 'Coba lagi di soal berikutnya!';
+                score.textContent = '+0 XP';
+            }
+
+            modal.classList.add('show');
+        }
+
+        // Next Question
+        function nextQuestion() {
+            document.getElementById('resultsModal').classList.remove('show');
+            gameState.currentQuestionIndex++;
+            gameState.selectedOption = null;
+            loadQuestion();
+        }
+
+        // Check Level Up
+        function checkLevelUp() {
+            const xpPerLevel = 100;
+            const newLevel = Math.floor(gameState.userXP / xpPerLevel) + 1;
+            
+            if (newLevel > gameState.userLevel) {
+                gameState.userLevel = newLevel;
+                localStorage.setItem('userLevel', gameState.userLevel);
+                
+                // Add to completed levels
+                if (!gameState.completedLevels.includes(newLevel)) {
+                    gameState.completedLevels.push(newLevel);
+                    localStorage.setItem('completedLevels', JSON.stringify(gameState.completedLevels));
+                }
+                
+                // Show level up notification
+                setTimeout(() => {
+                    alert('🎉 Selamat! Anda naik ke Level ' + gameState.userLevel + '!');
+                }, 1000);
+            }
+        }
+
+        // Update Achievements
+        function updateAchievements(questionType, isCorrect, answerTime) {
+            // Update achievement progress
+            achievementsData.forEach(achievement => {
+                switch(achievement.id) {
+                    case 'first_quiz':
+                        if (gameState.currentQuestionIndex === 0) {
+                            achievement.progress = 1;
+                            achievement.unlocked = true;
+                        }
+                        break;
+                    case 'streak_3':
+                        if (isCorrect && gameState.streakCount >= 3) {
+                            achievement.progress = achievement.requirement;
+                            achievement.unlocked = true;
+                        }
+                        break;
+                    case 'listening_master':
+                        if (questionType === 'listening' && isCorrect) {
+                            achievement.progress = Math.min(achievement.progress + 1, achievement.requirement);
+                            if (achievement.progress >= achievement.requirement) {
+                                achievement.unlocked = true;
+                            }
+                        }
+                        break;
+                    case 'speed_demon':
+                        if (isCorrect && answerTime < 10) {
+                            achievement.progress = 1;
+                            achievement.unlocked = true;
+                        }
+                        break;
+                    case 'level_5':
+                        achievement.progress = gameState.userLevel;
+                        achievement.unlocked = gameState.userLevel >= 5;
+                        break;
+                }
+            });
+            
+            localStorage.setItem('achievements', JSON.stringify(achievementsData));
+        }
+
+        // Show Results
+        function showResults() {
+            const totalPossibleScore = questions.reduce((sum, q) => sum + q.points, 0);
+            const percentage = Math.round((gameState.score / totalPossibleScore) * 100);
+            
+            // Check perfectionist achievement
+            if (percentage === 100) {
+                const perfectionist = achievementsData.find(a => a.id === 'perfectionist');
+                if (perfectionist) {
+                    perfectionist.progress = 1;
+                    perfectionist.unlocked = true;
+                }
+            }
+            
+            const modal = document.getElementById('resultsModal');
+            const icon = document.getElementById('resultIcon');
+            const title = document.getElementById('resultTitle');
+            const message = document.getElementById('resultMessage');
+            const score = document.getElementById('resultScore');
+            const continueBtn = document.querySelector('.continue-btn');
+
+            icon.className = 'result-icon success';
+            icon.innerHTML = '<i class="fas fa-trophy"></i>';
+            title.textContent = 'Kuis Selesai!';
+            message.textContent = `Skor Anda: ${percentage}%`;
+            score.textContent = gameState.score + ' XP';
+            
+            continueBtn.textContent = 'Mulai Lagi';
+            continueBtn.onclick = restartQuiz;
+
+            modal.classList.add('show');
+        }
+
+        // Restart Quiz
+        function restartQuiz() {
+            document.getElementById('resultsModal').classList.remove('show');
+            gameState.currentQuestionIndex = 0;
+            gameState.score = 0;
+            gameState.selectedOption = null;
+            gameState.streakCount = 0;
+            loadQuestion();
+        }
+
+        // Show Section
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Regenerate content if needed
+            if (sectionName === 'leaderboard') {
+                generateLeaderboard();
+            } else if (sectionName === 'achievements') {
+                generateAchievements();
+            } else if (sectionName === 'levels') {
+                generateLevels();
+            }
+        }
+
+        // Generate Leaderboard
+        function generateLeaderboard() {
+            const container = document.getElementById('leaderboardList');
+            
+            // Update user data in leaderboard
+            const userIndex = leaderboardData.findIndex(user => user.name === 'Anda');
+            if (userIndex !== -1) {
+                leaderboardData[userIndex].level = gameState.userLevel;
+                leaderboardData[userIndex].xp = gameState.userXP;
+            }
+            
+            // Sort by XP
+            leaderboardData.sort((a, b) => b.xp - a.xp);
+            
+            container.innerHTML = '';
+            
+            leaderboardData.forEach((user, index) => {
+                const item = document.createElement('div');
+                item.className = 'leaderboard-item';
+                
+                let rankClass = 'other';
+                if (index === 0) rankClass = 'gold';
+                else if (index === 1) rankClass = 'silver';
+                else if (index === 2) rankClass = 'bronze';
+                
+                item.innerHTML = `
+                    <div class="rank ${rankClass}">${index + 1}</div>
+                    <div class="user-avatar">${user.avatar}</div>
+                    <div class="user-details">
+                        <div class="username">${user.name}</div>
+                        <div class="user-level">Level ${user.level}</div>
+                    </div>
+                    <div class="user-xp">${user.xp} XP</div>
+                `;
+                
+                container.appendChild(item);
+            });
+        }
+
+        // Generate Achievements
+        function generateAchievements() {
+            const container = document.getElementById('achievementsList');
+            container.innerHTML = '';
+            
+            achievementsData.forEach(achievement => {
+                const card = document.createElement('div');
+                card.className = `achievement-card ${achievement.unlocked ? 'unlocked' : ''}`;
+                
+                const progressPercentage = (achievement.progress / achievement.requirement) * 100;
+                
+                card.innerHTML = `
+                    <div class="achievement-icon">
+                        <i class="${achievement.icon}"></i>
+                    </div>
+                    <div class="achievement-title">${achievement.title}</div>
+                    <div class="achievement-desc">${achievement.description}</div>
+                    <div class="achievement-progress">
+                        <div class="progress-text">${achievement.progress}/${achievement.requirement}</div>
+                        <div class="progress-bar-small">
+                            <div class="progress-fill-small" style="width: ${progressPercentage}%"></div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Generate Levels
+        function generateLevels() {
+            const container = document.getElementById('levelPath');
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= 10; i++) {
+                // Level node
+                const node = document.createElement('div');
+                node.className = 'level-node';
+                
+                if (gameState.completedLevels.includes(i)) {
+                    node.classList.add('completed');
+                } else if (i === gameState.userLevel) {
+                    node.classList.add('current');
+                } else {
+                    node.classList.add('locked');
+                }
+                
+                node.textContent = i;
+                node.onclick = () => {
+                    if (i <= gameState.userLevel) {
+                        alert(`Level ${i}: ${getLevelDescription(i)}`);
+                    }
+                };
+                
+                container.appendChild(node);
+                
+                // Connector (except for last level)
+                if (i < 10) {
+                    const connector = document.createElement('div');
+                    connector.className = 'level-connector';
+                    if (gameState.completedLevels.includes(i)) {
+                        connector.classList.add('completed');
+                    }
+                    container.appendChild(connector);
+                }
+            }
+        }
+
+        // Get Level Description
+        function getLevelDescription(level) {
+            const descriptions = {
+                1: 'Dasar-dasar bahasa Inggris',
+                2: 'Kosakata sehari-hari',
+                3: 'Tata bahasa sederhana',
+                4: 'Percakapan dasar',
+                5: 'Listening comprehension',
+                6: 'Tenses dan grammar',
+                7: 'Vocabulary advanced',
+                8: 'Business English',
+                9: 'Academic English',
+                10: 'Master level'
+            };
+            return descriptions[level] || 'Level lanjutan';
+        }
+
+        // Initialize game when page loads
+        window.onload = initGame;
+    </script>
+</body>
+</html>
